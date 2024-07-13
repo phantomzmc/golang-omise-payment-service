@@ -1,4 +1,4 @@
-module github.com/biskitsx/go-fiber-api
+module github.com/phantomzmc/omise-go-payment-service
 
 go 1.22.5
 

@@ -3,8 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/biskitsx/go-fiber-api/payment"
 	"github.com/gofiber/fiber/v3"
+	modelResponse "github.com/phantomzmc/omise-go-payment-service/model"
+	"github.com/phantomzmc/omise-go-payment-service/payment"
 )
 
 
@@ -25,26 +26,47 @@ func main() {
 		return c.JSON(response)
 	})
 
-	// app.Get( "/payment/:id", func(c fiber.Ctx) error {
-	// 	var p payment.Payment
-	// 	result := p.GetPaymentById(c.Params("id"))
-	// 	return c.JSON(result)
-	// })
+	app.Get( "/payment/:id", func(c fiber.Ctx) error {
+		var p payment.Payment
+		result := p.GetPaymentById(c.Params("id"))
+		return c.JSON(result)
+	})
 
 	app.Get( "/payments", func(c fiber.Ctx) error {
 		var p payment.Payment
-		result := p.GetPaymentById()
+		result := p.GetPaymentList()
 		return c.JSON(result)
 	})
 
 	app.Post( "/payment", func(c fiber.Ctx) error {
+		reqPayment := new(payment.RequestPayment)
+		if err := c.Bind().JSON(reqPayment); err != nil {
+			log.Println(err)
+            return err
+        }
 		var p payment.Payment
-		response := p.CreatePayment()
+		response := p.CreatePayment(reqPayment)
 		return c.JSON(response)
+	})
+
+	app.Post( "/charge-by-source", func(c fiber.Ctx) error {
+		reqChargeBySource := new(payment.RequestChargeBySource)
+		if err := c.Bind().JSON(reqChargeBySource); err != nil {
+			log.Println(err)
+            return err
+        }
+		var p payment.Payment
+		result := p.ChargeBySource(reqChargeBySource)
+		modelResponse := modelResponse.CommonResponse{
+			Status: "success",
+			Message: "success",
+			Data: result,
+		}
+		return c.JSON(modelResponse)
 	})
 
 
 
-    // Start the server on port 3000
-    log.Fatal(app.Listen(":3000"))
+    // Start the server on port 8080
+    log.Fatal(app.Listen(":8080"))
 }
