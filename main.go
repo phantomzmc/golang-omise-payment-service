@@ -65,6 +65,17 @@ func main() {
 		return c.JSON(modelResponse)
 	})
 
+	app.Get("/check/:id", func(c fiber.Ctx) error {
+		var p payment.Payment
+		result := p.CheckStatusByChargeId(c.Params("id"))
+		modelResponse := modelResponse.CommonResponse{
+			Status: "success",
+			Message: "success",
+			Data: result,
+		}
+		return c.JSON(modelResponse)
+	})
+
 
 
     // Start the server on port 8080

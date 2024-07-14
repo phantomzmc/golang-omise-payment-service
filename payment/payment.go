@@ -26,6 +26,7 @@ type Payment struct {
 }
 
 type ChargeBySource struct {
+	Id string `json:"id"`
 	Status string `json:"status"`
 	Amount int `json:"amount"`
 	Currency string `json:"currency"`
@@ -37,6 +38,10 @@ type Source struct {
 	DownloadUrl string `json:"dowloadUrl"`
 	FileName string `json:"fileName"`
 	Id string `json:"id"`
+}
+
+type CheckStatus struct {
+	Status string `json:"status"`
 }
 
 
@@ -74,6 +79,7 @@ func (p *Payment) ChargeBySource(req *RequestChargeBySource) ChargeBySource {
 	log.Println(req.SourceId)
 	charge := omiseSevice.CreateChargeBySource(req.SourceId, req.Amount, req.Currency)
 	result := ChargeBySource{
+		Id: charge.ID,
 		Status: string(charge.Status),
 		Amount: int(charge.Amount),
 		Currency: charge.Currency,
@@ -86,6 +92,20 @@ func (p *Payment) ChargeBySource(req *RequestChargeBySource) ChargeBySource {
 	}
 	return result
 }
+
+func (p *Payment) CheckStatusByChargeId(chargeId string) CheckStatus {
+	charge := omiseSevice.GetChargeById(chargeId)
+	log.Println(charge)
+	result := CheckStatus{
+		Status: string(charge.Status),
+	}
+	return result
+}
+
+func (p *Payment) CheckStatusByTransactionId() {
+
+}
+
 
 func (p *Payment) UpdatePayment() {
 
