@@ -19,6 +19,13 @@ type RequestChargeBySource struct {
 	Currency string `json:"currency"`
 }
 
+
+type RequestChargeByToken struct {
+	TokenId string `json:"tokenId"`
+	Amount int `json:"amount"`
+	Currency string `json:"currency"`
+}
+
 type Payment struct {
 	ID int `json:"id"`
 	TransactionID int `json:"transactionId"`
@@ -90,6 +97,13 @@ func (p *Payment) ChargeBySource(req *RequestChargeBySource) ChargeBySource {
 			Id: charge.Source.ID,
 		},
 	}
+	return result
+}
+
+func (p *Payment) ChargeByToken(req *RequestChargeByToken) interface{} {
+	log.Println(req.TokenId)
+	charge := omiseSevice.CreateChargeByToken(req.TokenId, req.Amount, req.Currency)
+	result := charge
 	return result
 }
 

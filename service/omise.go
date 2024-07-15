@@ -82,6 +82,25 @@ func CreateChargeBySource(source string, amount int, currency string) *omise.Cha
 	return result
 }
 
+func CreateChargeByToken(tokenId string, amount int, currency string) *omise.Charge {
+	client, _ := omise.NewClient(
+		OmisePublicKey,
+		OmiseSecretKey,
+	)
+	result := &omise.Charge{}
+	err := client.Do(result, &operations.CreateCharge{
+		Amount:   int64(amount),
+		Currency: currency,
+		Card: tokenId,
+		ReturnURI: "http://localhost:8080/sync",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(result)
+	return result
+}
+
 func GetChargeById(changeId string) *omise.Charge {
 	client, _ := omise.NewClient(
 		OmisePublicKey,

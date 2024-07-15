@@ -65,6 +65,22 @@ func main() {
 		return c.JSON(modelResponse)
 	})
 
+	app.Post( "/charge-by-token", func(c fiber.Ctx) error {
+		reqChargeByToken := new(payment.RequestChargeByToken)
+		if err := c.Bind().JSON(reqChargeByToken); err != nil {
+			log.Println(err)
+            return err
+        }
+		var p payment.Payment
+		result := p.ChargeByToken(reqChargeByToken)
+		modelResponse := modelResponse.CommonResponse{
+			Status: "success",
+			Message: "success",
+			Data: result,
+		}
+		return c.JSON(modelResponse)
+	})
+
 	app.Get("/check/:id", func(c fiber.Ctx) error {
 		var p payment.Payment
 		result := p.CheckStatusByChargeId(c.Params("id"))
@@ -76,7 +92,11 @@ func main() {
 		return c.JSON(modelResponse)
 	})
 
-
+	app.Get("/sync", func(c fiber.Ctx) error {
+		// TODO: business logic
+		print("call to payment sync")
+		return c.Redirect().To("http://localhost:3000/th/payment?status=success")
+	})
 
     // Start the server on port 8080
     log.Fatal(app.Listen(":8080"))
